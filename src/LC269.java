@@ -2,7 +2,7 @@ import java.util.*;
 
 // LC 269 Alien Directory
 public class LC269 {
-    public static String alienOrder(String[] words) {
+    static String alienOrder(String[] words) {
         // create the graph without edges
         Graph g = new Graph();
         for (String word : words) {
