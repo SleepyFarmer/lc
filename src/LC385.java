@@ -41,7 +41,7 @@ public class LC385 {
         }
 
         public void add(NestedInteger ni) {
-            
+
         }
     }
     static class Token {
