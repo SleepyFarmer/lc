@@ -14,7 +14,8 @@ public class LC291 {
         }
 
         Map<Character, CharSequence> lookup = new HashMap<>();
-        return match(lookup, str, pattern);
+        Set<CharSequence> seqs = new HashSet<>(); // make sure that we do not assign the same sequence to multiple letters
+        return match(lookup, seqs, str, pattern);
     }
 
     void debug(Map<Character, CharSequence> lookup, CharSequence content, CharSequence pattern) {
@@ -26,7 +27,8 @@ public class LC291 {
         }
     }
 
-    boolean match(Map<Character, CharSequence> lookup, CharSequence content, CharSequence pattern) {
+    boolean match(Map<Character, CharSequence> lookup, Set<CharSequence> seqs,
+                  CharSequence content, CharSequence pattern) {
         //debug(lookup, content, pattern);
         int lenC = content.length();
         int lenP = pattern.length();
@@ -47,23 +49,25 @@ public class LC291 {
                 return false;
             }
 
-            return match(lookup, content.subSequence(len, lenC), pattern.subSequence(1, lenP));
-        }
-
-        if (lenP == 1) {
-            // last one
-            return lenC > 0;
+            return match(lookup, seqs, content.subSequence(len, lenC), pattern.subSequence(1, lenP));
         }
 
         for (int i = 1; i <= lenC - lenP + 1; i++) {
             seq = content.subSequence(0, i);
+            if (seqs.contains(seq)) {
+                // the sequence has been assigned to another letter
+                // skip
+                continue;
+            }
             lookup.put(p, seq);
-            boolean matched = match(lookup, content.subSequence(i, lenC), pattern.subSequence(1, lenP));
+            seqs.add(seq);
+            boolean matched = match(lookup, seqs, content.subSequence(i, lenC), pattern.subSequence(1, lenP));
             if (matched) {
                 return true;
             }
 
             lookup.remove(p);
+            seqs.remove(seq);
         }
         return false;
     }
@@ -72,6 +76,7 @@ public class LC291 {
         test("redblueredblue","abab");
         test("asdasdasdasd", "aaaa");
         test("xyzabcxzyabc", "aabb");
+        test("aa", "ab");
     }
 
     static void test(String str, String pattern) {
